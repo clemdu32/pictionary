@@ -4,15 +4,43 @@ const Party = require('../models/parties');
 
 module.exports = (app, io) => {
 
-    io.on('connection', function(socket){
+    let parties = {};
+
+    newParty = (partyId)=>{
+        Party.findById(partyId,function (err, party) {
+            parties[partyId]=party;
+            console.log(partyId + ' added to playing parties');
+            console.log(parties);
+        });
+    };
+
+    io.on('connection', function(socket) {
         console.log('a new user is connected');
-        socket.on('join_party', function (party_id) {
-            socket.join(party_id, function () {
-                socket.emit('newPlayer');
-                socket.on('drawing', function(coord){
-                    console.log('x: ' + coord.x + '  px: ' + coord.px);
-                    socket.broadcast.to(party_id).emit('update', coord);
-                })
+        socket.on('playerConnected', function (data) {
+            const token = data.token;
+            jwt.verify(token, 'privatekey', function (err, authorizedData){
+                const email = authorizedData.email;
+                Party.findOne({status : "Playing...", "players.player":email },function (err, party) {
+                    if (party){
+                        socket.join(party._id, function (err) {
+                            console.log('Player join the room');
+                            socket.broadcast.to(party._id).emit('message', email + ' has joined the party');
+                            socket.broadcast.to(party._id).emit('updatePartyInfo');
+
+                            socket.on('drawing', function (data) {
+                                socket.broadcast.to(party._id).emit('update', data);
+                            });
+                            socket.on('partyStarted', function (data) {
+
+                            });
+                            socket.on('disconnect', function() {
+                                io.to(party._id).emit('updatePartyInfo');
+                                console.log(email + ' has disconnected');
+                            });
+                        });
+                    }
+                });
+
             });
         });
     });
@@ -51,7 +79,7 @@ module.exports = (app, io) => {
                 console.log('ERROR: Could not connect to the protected route');
                 res.sendStatus(403);
             } else {
-                Party.findOne({status : "Playing...", players: authorizedData.email },function (err, partie) {
+                Party.findOne({status : "Playing...", "players.player":authorizedData.email },function (err, partie) {
                     if(err) {
                         //If error send Forbidden (403)
                         console.log('ERROR: Could not create new party');
@@ -62,18 +90,15 @@ module.exports = (app, io) => {
                         if (partie){
                             res.json({
                                 isPlaying: true,
-                                playersList: partie.players,
-                                creator: partie.creator,
-                                partyId: partie._id
+                                partyId: partie._id,
+                                party: partie
                             });
                             console.log('Player is playing');
                         }
                         else{
                             res.json({
                                 isPlaying: false,
-                                playersList: [],
-                                creator: '',
-                                partyId: 0
+                                partyId:0
                             });
                             console.log('Player is not playing');
                         }
@@ -90,7 +115,7 @@ module.exports = (app, io) => {
                 console.log('ERROR: Could not connect to the protected route');
                 res.sendStatus(403);
             } else {
-                Party.findOne({status: "Playing...", players: authorizedData.email}, function (err, partie) {
+                Party.findOne({status: "Playing...", "players.player":authorizedData.email}, function (err, partie) {
                     if (err) {
                         //If error send Forbidden (403)
                         console.log('ERROR');
@@ -99,7 +124,7 @@ module.exports = (app, io) => {
                         if (partie != null){
                             let playersList = partie.players;
                             let status = partie.status;
-                            playersList.splice(playersList.indexOf(authorizedData.email), 1);
+                            playersList.splice(playersList.indexOf({player: authorizedData.email}), 1);
                             if (partie.creator === authorizedData.email){
                                 status = 'Finished';
                             }
@@ -137,7 +162,7 @@ module.exports = (app, io) => {
                     numberOfTurn: req.body.numberOfTurn,
                     status : 'Playing...',
                     creator: authorizedData.email,
-                    players: [authorizedData.email]
+                    players: [{player : authorizedData.email, score: 0}]
                 });
 
                 newParty.save(function (err) {
@@ -170,7 +195,7 @@ module.exports = (app, io) => {
                     } else {
                         if (partie != null){
                             let playersList = partie.players;
-                            playersList.push(authorizedData.email);
+                            playersList.push({player : authorizedData.email, score : 0});
                             Party.findOneAndUpdate({_id: partie._id}, {players: playersList}, function (err) {
                                 if (err) {
                                     console.log("ERROR");
@@ -185,6 +210,32 @@ module.exports = (app, io) => {
                                 }
                             });
                         }
+                    }
+                })
+            }
+        })
+    });
+
+
+    app.get('/party/:partyId', checkToken, (req, res) => {
+        //verify the JWT token generated for the user
+        jwt.verify(req.headers['authorization'], 'privatekey', (err, authorizedData) => {
+            if(err){
+                //If error send Forbidden (403)
+                console.log('ERROR: Could not join new party');
+                res.status(403);
+            } else {
+                //If token is successfully verified, we can send the autorized dat
+                const partyId = req.params['partyId'];
+                Party.findOne({_id: partyId}, function (err, party) {
+                    if (err) {
+                        //If error send Forbidden (403)
+                        console.log('ERROR');
+                        res.status(403);
+                    } else {
+                        res.json({
+                            party: party
+                        });
                     }
                 })
             }

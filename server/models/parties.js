@@ -6,7 +6,7 @@ const PartySchema = new Schema({
     numberOfTurn: Number,
     status : String,
     creator: String,
-    players: [String]
+    players: [{ player: String, score: Number }]
 });
 
 

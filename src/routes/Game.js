@@ -16,24 +16,16 @@ export default class Game extends React.Component{
         };
     }
 
-    handleUserStatus = () => {
-        const loggedIn = this.state.Auth.loggedIn();
-        const isAdmin = this.state.Auth.isAdmin();
-        this.setState({
-            isAdmin,
-            loggedIn
-        })
-    };
-
-    userGameStatus = () => {
+    handlePlayerStatus = () =>{
         let self = this;
         const reqOptions = {
             method : 'get'
         };
         this.state.Auth.fetch('user/gamestatus',reqOptions)
             .then(response => {
-                self.setState({isPlaying: response.isPlaying, playersList: response.playersList, creator: response.creator, partyId: response.partyId})
-            });
+                self.setState({partyId: response.partyId, isPlaying: response.isPlaying, partyInfo: response.party});
+                console.log(this.state.party)
+            })
     };
 
 
@@ -42,8 +34,8 @@ export default class Game extends React.Component{
             return (
                 <div>
                     <NavBar pseudo={this.state.Auth.getProfile().email} isAdmin={this.state.Auth.isAdmin()}/>
-                    <GameArea isPlaying={this.state.isPlaying} partyId={this.state.partyId} creator={this.state.creator} playersList={this.state.playersList} webSocket={this.state.webSocket}/>
-                    <PartyArea isPlaying={this.state.isPlaying} webSocket={this.state.webSocket}/>
+                    <GameArea isPlaying={this.state.isPlaying} partyInfo={this.state.partyInfo} webSocket={this.state.webSocket}/>
+                    <PartyArea isPlaying={this.state.isPlaying} webSocket={this.state.webSocket} />
                 </div>
             )
         } else {
@@ -53,9 +45,12 @@ export default class Game extends React.Component{
 
     componentDidMount() {
         const self = this;
-        self.userGameStatus();
-        self.state.webSocket.on('newPlayer', function () {
-            self.userGameStatus();
-        })
+        this.handlePlayerStatus();
+        console.log(this.state.partyId);
+        self.state.webSocket.emit('playerConnected',{token: localStorage.getItem('token')});
+        self.state.webSocket.on('updatePartyInfo', function () {
+            self.handlePlayerStatus();
+        });
+
     }
 }

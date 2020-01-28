@@ -1,5 +1,5 @@
 export default function sketch (p, socket, isCreator) {
-    let width = document.getElementById("sketch").offsetWidth;
+    let width = document.getElementById("sketchCard").offsetWidth - 45;
     let height = window.innerHeight/2;
 
     p.setup = function () {
@@ -24,6 +24,9 @@ export default function sketch (p, socket, isCreator) {
         }
         socket.on('update', function(coord){
             p.line(coord.x, coord.y, coord.px, coord.py);
+        });
+        socket.on('newTurn', function () {
+            p.remove()
         })
     };
 };

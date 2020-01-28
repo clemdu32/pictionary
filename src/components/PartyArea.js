@@ -36,7 +36,9 @@ export default class PartyArea extends React.Component{
                 console.log(response);
                 return response;
             })
-            .then(response =>self.setState({partiesList: response.parties}));
+            .then(response =>{
+                self.setState({partiesList: response.parties});
+            });
     };
 
 
@@ -52,7 +54,6 @@ export default class PartyArea extends React.Component{
                 console.log(response);
                 document.location.reload();
             })
-            .then(response =>self.setState({partiesList: response.parties}));
     };
 
     render() {
