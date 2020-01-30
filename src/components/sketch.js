@@ -1,10 +1,11 @@
-export default function sketch (p, socket, isCreator) {
+export default function sketch (p, socket, isDrawing) {
     let width = document.getElementById("sketchCard").offsetWidth - 45;
     let height = window.innerHeight/2;
 
     p.setup = function () {
+        p.clear();
         p.createCanvas(width, height);
-        p.background(102);
+        p.background(51);
     };
 
     p.adaptedSize = function (props) {
@@ -13,10 +14,9 @@ export default function sketch (p, socket, isCreator) {
             height = props.Height;
         }
     };
-
     p.draw = function () {
         p.stroke(255);
-        if(isCreator){
+        if(isDrawing){
             if (p.mouseIsPressed === true) {
                 p.line(p.mouseX, p.mouseY, p.pmouseX, p.pmouseY);
                 socket.emit('drawing', {x: p.mouseX, y:p.mouseY, px:p.pmouseX, py: p.pmouseY});
@@ -25,8 +25,8 @@ export default function sketch (p, socket, isCreator) {
         socket.on('update', function(coord){
             p.line(coord.x, coord.y, coord.px, coord.py);
         });
-        socket.on('newTurn', function () {
-            p.remove()
+        socket.on('deleteSketch', function () {
+            p.setup();
         })
     };
 };

@@ -24,7 +24,8 @@ mongoose.connection.once('open', function(){
     console.log('Connection error:', error);
 });
 
-require('./api/userRoutes.js')(app, io);
+require('./api/userRoutes.js')(app);
+require('./api/webSocket.js')(io);
 
 require('./api/generalRoutes.js')(app);
 

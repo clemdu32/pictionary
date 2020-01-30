@@ -1,49 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
 const Party = require('../models/parties');
+const Word = require('../models/words');
 
-module.exports = (app, io) => {
-
-    let parties = {};
-
-    newParty = (partyId)=>{
-        Party.findById(partyId,function (err, party) {
-            parties[partyId]=party;
-            console.log(partyId + ' added to playing parties');
-            console.log(parties);
-        });
-    };
-
-    io.on('connection', function(socket) {
-        console.log('a new user is connected');
-        socket.on('playerConnected', function (data) {
-            const token = data.token;
-            jwt.verify(token, 'privatekey', function (err, authorizedData){
-                const email = authorizedData.email;
-                Party.findOne({status : "Playing...", "players.player":email },function (err, party) {
-                    if (party){
-                        socket.join(party._id, function (err) {
-                            console.log('Player join the room');
-                            socket.broadcast.to(party._id).emit('message', email + ' has joined the party');
-                            socket.broadcast.to(party._id).emit('updatePartyInfo');
-
-                            socket.on('drawing', function (data) {
-                                socket.broadcast.to(party._id).emit('update', data);
-                            });
-                            socket.on('partyStarted', function (data) {
-
-                            });
-                            socket.on('disconnect', function() {
-                                io.to(party._id).emit('updatePartyInfo');
-                                console.log(email + ' has disconnected');
-                            });
-                        });
-                    }
-                });
-
-            });
-        });
-    });
+module.exports = (app) => {
 
     app.post('/login', (req, res, next) => {
         const { body } = req;
@@ -106,46 +66,6 @@ module.exports = (app, io) => {
                 });
             }
         })
-    });
-
-    app.get('/user/leaveparty', checkToken, (req, res) => {
-        //verify the JWT token generated for the user
-        jwt.verify(req.headers['authorization'], 'privatekey', (err, authorizedData) => {
-            if (err) {
-                console.log('ERROR: Could not connect to the protected route');
-                res.sendStatus(403);
-            } else {
-                Party.findOne({status: "Playing...", "players.player":authorizedData.email}, function (err, partie) {
-                    if (err) {
-                        //If error send Forbidden (403)
-                        console.log('ERROR');
-                        res.status(403);
-                    } else {
-                        if (partie != null){
-                            let playersList = partie.players;
-                            let status = partie.status;
-                            playersList.splice(playersList.indexOf({player: authorizedData.email}), 1);
-                            if (partie.creator === authorizedData.email){
-                                status = 'Finished';
-                            }
-                            Party.findOneAndUpdate({_id: partie._id}, {status: status, players: playersList}, function (err) {
-                                if (err) {
-                                    console.log("ERROR");
-                                    res.json({
-                                        message: "You cannot leave the party"
-                                    })
-                                } else {
-                                    console.log("SUCCESS");
-                                    res.json({
-                                        message: "You leave the party"
-                                    })
-                                }
-                            });
-                        }
-                    }
-                })
-            }
-        });
     });
 
     app.post('/newparty', checkToken, (req, res) => {

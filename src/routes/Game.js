@@ -34,7 +34,7 @@ export default class Game extends React.Component{
             return (
                 <div>
                     <NavBar pseudo={this.state.Auth.getProfile().email} isAdmin={this.state.Auth.isAdmin()}/>
-                    <GameArea isPlaying={this.state.isPlaying} partyInfo={this.state.partyInfo} webSocket={this.state.webSocket}/>
+                    <GameArea isPlaying={this.state.isPlaying} webSocket={this.state.webSocket}/>
                     <PartyArea isPlaying={this.state.isPlaying} webSocket={this.state.webSocket} />
                 </div>
             )
@@ -46,11 +46,6 @@ export default class Game extends React.Component{
     componentDidMount() {
         const self = this;
         this.handlePlayerStatus();
-        console.log(this.state.partyId);
         self.state.webSocket.emit('playerConnected',{token: localStorage.getItem('token')});
-        self.state.webSocket.on('updatePartyInfo', function () {
-            self.handlePlayerStatus();
-        });
-
     }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import './style/signup.css';
+import logo from '../images/logo.png';
 
 
 export default class ApplicationForm extends React.Component{
@@ -45,8 +46,8 @@ export default class ApplicationForm extends React.Component{
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="form-signin" >
-                <img className="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72"  height="72"/>
-                    <h1 className="h3 mb-3 font-weight-normal">Please sign up</h1>
+                <img className="mb-4" src={logo} alt="" width="300"/>
+                <h1 className="h3 mb-3 font-weight-normal">Please sign up</h1>
                     <label htmlFor="inputEmail">Enter your Email address</label>
                     <input type="email" id="inputEmail" className="form-control" placeholder="Email address" name="email" onChange={this.handleChange}  required  autoFocus/>
                     <label htmlFor="inputEmail">Enter your Pseudo</label>
