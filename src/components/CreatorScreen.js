@@ -53,6 +53,7 @@ export default class CreatorScreen extends React.Component {
     };
 
     render() {
+        console.log(this.props.words)
         if (this.props.phase === "Waiting for new players...") {
             return (
                 <div className="container">
@@ -96,7 +97,8 @@ export default class CreatorScreen extends React.Component {
                         <div className="col-md-9" id="sketch">
                             <div className="card text-white bg-danger mt-2" id="sketchCard">
                                 <h5 className="card-header">Drawer : {this.props.creator}</h5>
-                                <h5 className="card-header">Turn n° : {this.state.turnNumber}</h5>
+                                <h5 className="card-header">Word : {this.props.words[this.state.turnNumber]}</h5>
+                                <h5 className="card-header">Turn n° : {this.props.turn}</h5>
                                 <div className="card-body">
                                     <P5Wrapper sketch={this.handleSketch}/>
                                 </div>

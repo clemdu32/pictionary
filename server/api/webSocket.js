@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const Party = require('../models/parties')
+const Word = require('../models/words')
 
 module.exports = (io) => {
   const parties = {}
@@ -18,7 +19,7 @@ module.exports = (io) => {
               if (parties[party._id] === undefined) {
                 parties[party._id] = {}
                 parties[party._id].phase = 'Waiting for new players...'
-                parties[party._id].words = ['chien', 'chien', 'chien', 'chien', 'chien', 'chien', 'chien', 'chien', 'chien', 'chien']
+                parties[party._id].words = ['chien', 'chat', 'voiture', 'chien', 'chat', 'voiture','chien', 'chat', 'voiture', 'voiture']
                 parties[party._id].turn = 1
                 parties[party._id].numberOfTurn = party.numberOfTurn
                 parties[party._id].status = party.status
@@ -47,9 +48,9 @@ module.exports = (io) => {
                       if (err) console.log(err)
                       io.to(party._id).emit('updatePartyInfo', parties[party._id])
                     })
-                  }, 30)
+                  }, 3000)
                 }
-                if (data === parties[party._id].words[turn]) {
+                if (data === parties[party._id].words[turn - 1]) {
                   parties[party._id].turn += 1
                   const playersList = parties[party._id].players
                   const index = playersList.map(function (e) {
@@ -62,7 +63,7 @@ module.exports = (io) => {
                   setTimeout(function () {
                     io.to(party._id).emit('nextTurn', parties[party._id].turn)
                     io.to(party._id).emit('deleteSketch')
-                  }, 50)
+                  }, 5000)
                 }
               })
 

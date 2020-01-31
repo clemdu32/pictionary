@@ -12,7 +12,9 @@ export default class GameArea extends React.Component{
             partyInfo:{
                 players:[],
                 creator:'',
-                phase:''
+                phase:'',
+                turn :1,
+                words:[]
             },
             phase:'',
             Auth : new AuthService(),
@@ -40,10 +42,10 @@ export default class GameArea extends React.Component{
     render() {
         if (this.props.isPlaying === true){
                 if (this.state.Auth.getProfile().email === this.state.partyInfo.creator){
-                    return(<CreatorScreen creator={this.state.partyInfo.creator} players={this.state.partyInfo.players} webSocket={this.props.webSocket} phase={this.state.partyInfo.phase}/>)
+                    return(<CreatorScreen creator={this.state.partyInfo.creator} players={this.state.partyInfo.players} webSocket={this.props.webSocket} phase={this.state.partyInfo.phase} words={this.state.partyInfo.words} turn={this.state.partyInfo.turn}/>)
                 }
                 else{
-                    return(<PlayerScreen creator={this.state.partyInfo.creator} players={this.state.partyInfo.players} webSocket={this.props.webSocket} phase={this.state.partyInfo.phase}/>)
+                    return(<PlayerScreen creator={this.state.partyInfo.creator} players={this.state.partyInfo.players} webSocket={this.props.webSocket} phase={this.state.partyInfo.phase} turn={this.state.partyInfo.turn}/>)
                 }
         }
         else{

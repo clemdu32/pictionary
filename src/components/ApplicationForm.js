@@ -34,7 +34,7 @@ export default class ApplicationForm extends React.Component{
             })
 
         };
-        fetch('http://192.168.0.2:3001/registration',reqOptions)
+        fetch('http://localhost:3001/registration',reqOptions)
             .then(function(response) {
                 return response.json();
             }).then(function (response) {

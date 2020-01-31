@@ -25,23 +25,53 @@ export default class NavBar extends React.Component{
                 return (
                     <div>
                         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                            <a className="navbar-brand  mr-auto" href="#">Pictionnary</a>
-                            <p className="navbar-brand mr-auto">{this.props.pseudo}</p>
-                            <button className="btn btn-warning my-2 my-sm-0 " type="button" onClick={this.moveToDashboard}>Administration Panel</button>
-                            <button className="btn btn-danger my-2 my-sm-0 " type="button" onClick={this.logOut}>Log out</button>
+                            <a className="navbar-brand  mr-auto" href="/game">Pictionnary</a>
+                            <button className="navbar-toggler" type="button" data-toggle="collapse"
+                                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul className="navbar-nav mr-auto">
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#">My history</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#" onClick={this.moveToDashboard}>Administration Panel</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#" onClick={this.logOut}>Log out</a>
+                                    </li>
+                                </ul>
+                            </div>
                         </nav>
                     </div>
                 );
             }
             else{
                 return (
-                <div>
-                    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                        <a className="navbar-brand  mr-auto" href="#">Pictionnary</a>
-                        <p className="navbar-brand mr-auto">{this.props.pseudo}</p>
-                        <button className="btn btn-danger my-2 my-sm-0 " type="button" onClick={this.logOut}>Log out</button>
-                    </nav>
-                </div>
+                    <div>
+                        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <a className="navbar-brand  mr-auto" href="#">Pictionnary</a>
+                            <button className="navbar-toggler" type="button" data-toggle="collapse"
+                                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                                <ul className="navbar-nav mr-auto">
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#">My history</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="#" onClick={this.logOut}>Log out</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
                 );
             }
 

@@ -16,7 +16,8 @@ export default class PlayerScreen extends React.Component {
             turnNumber: 0,
             webSocket: this.props.webSocket,
             Auth: new AuthService(),
-            phase: 'Waiting for players...'
+            phase: 'Waiting for players...',
+
         }
     };
 
@@ -103,7 +104,7 @@ export default class PlayerScreen extends React.Component {
                         <div className="col-md-9" id="sketch">
                             <div className="card text-white bg-danger mt-2" id="sketchCard">
                                 <h5 className="card-header">Drawer : {this.props.creator}</h5>
-                                <h5 className="card-header">Turn n° : {this.state.turnNumber}</h5>
+                                <h5 className="card-header">Turn n° : {this.props.turn}</h5>
                                 <div className="card-body">
                                     <P5Wrapper sketch={this.handleSketch}/>
                                 </div>

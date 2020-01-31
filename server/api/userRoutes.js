@@ -157,6 +157,24 @@ module.exports = (app) => {
     })
   })
 
+  app.get('/deleteword/:wordId', checkToken, (req, res) => {
+    // verify the JWT token generated for the user
+    jwt.verify(req.headers.authorization, 'privatekey', (err, authorizedData) => {
+      if (err) {
+        console.log('ERROR: Could not join new party')
+      } else {
+        // If token is successfully verified, we can send the autorized dat
+        const wordId = req.params.wordId
+        Word.deleteOne({ _id: wordId }, function (err) {
+          if (err) console.log(err)
+          else {
+            res.json({ message: 'word deleted' })
+          }
+        })
+      }
+    })
+  })
+
   app.get('/parties', checkToken, (req, res) => {
     // verify the JWT token generated for the user
     jwt.verify(req.headers.authorization, 'privatekey', (err, authorizedData) => {
@@ -171,6 +189,44 @@ module.exports = (app) => {
             parties
           })
           console.log('SUCCESS: all parties')
+        })
+      }
+    })
+  })
+
+  app.get('/words', checkToken, (req, res) => {
+    // verify the JWT token generated for the user
+    jwt.verify(req.headers.authorization, 'privatekey', (err, authorizedData) => {
+      if (err) {
+        console.log('ERROR: Could not connect to the protected route')
+        res.sendStatus(403)
+      } else {
+        Word.find({}, function (err, words) {
+          if (err) console.log(err)
+          res.json({
+            message: 'Successful log in',
+            words
+          })
+          console.log('SUCCESS: all parties')
+        })
+      }
+    })
+  })
+
+  app.post('/newword', checkToken, (req, res, next) => {
+    const { body } = req
+    const newWord = body.newWord
+    jwt.verify(req.headers.authorization, 'privatekey', (err, authorizedData) => {
+      if (err) {
+        console.log('ERROR: Could not connect to the protected route')
+        res.sendStatus(403)
+      } else {
+        const word = new Word({ word: newWord })
+        word.save(function (err) {
+          if (err) console.log(err)
+          res.json({
+            message: 'Word added'
+          })
         })
       }
     })
