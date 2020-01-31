@@ -19,7 +19,7 @@ module.exports = (io) => {
               if (parties[party._id] === undefined) {
                 parties[party._id] = {}
                 parties[party._id].phase = 'Waiting for new players...'
-                parties[party._id].words = ['chien', 'chat', 'voiture', 'chien', 'chat', 'voiture','chien', 'chat', 'voiture', 'voiture']
+                parties[party._id].words = ['chien', 'chien', 'voiture', 'ciel', 'chat', 'voiture','chien', 'chat', 'voiture', 'voiture']
                 parties[party._id].turn = 1
                 parties[party._id].numberOfTurn = party.numberOfTurn
                 parties[party._id].status = party.status
@@ -50,7 +50,7 @@ module.exports = (io) => {
                     })
                   }, 3000)
                 }
-                if (data === parties[party._id].words[turn - 1]) {
+                if (data === parties[party._id].words[turn]) {
                   parties[party._id].turn += 1
                   const playersList = parties[party._id].players
                   const index = playersList.map(function (e) {
