@@ -13,7 +13,7 @@ Git, Node 10, React JS, MongoDB, Socket.io, P5.js.
 Le FrontEnd de ce projet a été réalisé avec React JS en utilisant bootstrap comme framework CSS.
 Pour la partie backend, elle a été implémentée sur Node avec le framework Express. La BDD est du NoSQL sur MongoDB. L'authentification est assurée par utilisation d'un JWT token. La partie dessin utilise la librairie P5.JS et la partie temps réel a été développée avec Socket.io.
 
-##Installation du projet
+## Installation du projet
 
 Commencez par cloner ce repository en utilisant la commande :
 ### `git clone https://github.com/clemdu32/pictionary.git`
@@ -40,7 +40,7 @@ Lancer un shell MongoDB et exécuter cette commande pour créer une DB pour notr
 
 ### `use DB_NAME`
 
-Dans le même shell exécuter le fichier dbInitialization.js pour y ajouter des données en tapant:
+Dans le même shell exécuter le fichier dbInitialization.js pour y ajouter les données de test:
 
 ### `load("/PATH_TO_FILE/dbInitialization.js")`
 
@@ -63,3 +63,10 @@ Mot de passe : admin
 
 Email compte utilisateur classique : joueur@joueur.fr <br>
 Mot de passe : joueur
+
+## Description des fonctionnalités
+
+Un joueur peut : créer une partie, rejoindre une partie.
+
+Un administrateur peut faire ce que fait un joueur et gérer la base de données des mots.
+
